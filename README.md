@@ -1,2 +1,3 @@
-# CaveAdventure
-Cave Adventure game for Minetest
+# Cave Adventure
+
+Custom Minetest game that takes place in a huge cave world. Dig deeper for progress
