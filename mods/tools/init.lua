@@ -51,7 +51,12 @@ minetest.register_on_punchnode(function(pos, oldnode, digger)
 
     if wielded and wielded:get_name() == "tools:pickaxe" then
         local node = minetest.get_node(pos)
-        local node_hp = minetest.registered_nodes[node.name].node_hp
+
+        if node.name == "air" then return end
+        if node.name == "unknown" then return end
+        if node.name == "ignore" then return end
+
+        local node_hp = minetest.registered_nodes[node.name].node_hp or 3
 
         local dig_key = tools.vector_to_string(pos)
         local state = dig_state[dig_key]
