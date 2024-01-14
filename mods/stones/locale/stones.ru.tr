@@ -1,4 +1,3 @@
 # textdomain: stones
-Stone=Камень
-Cobblestone=Булыжник
-Bedrock=Коренная порода
+Limestone=Известняк
+Dripstone=Натёчный камень
