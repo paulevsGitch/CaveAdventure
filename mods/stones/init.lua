@@ -1,8 +1,13 @@
 local S = minetest.get_translator("stones")
 
+local sounds = {
+	footstep = {name = "stones_default_step", gain = 1.0}
+}
+
 minetest.register_node("stones:limestone", {
 	description = S("Limestone"),
 	tiles = {"stones_testrock.png"},
+	sounds = sounds,
 	node_hp = 3
 })
 
@@ -10,13 +15,13 @@ minetest.register_node("stones:debug", {
 	description = S("Debug Light"),
 	tiles = {"stones_limestone.png"},
 	light_source = minetest.LIGHT_MAX,
+	sounds = sounds,
 	node_hp = 8
 })
 
 local function place_dripstone(itemstack, placer, pointed_thing)
-
 	local dir = pointed_thing.under.y - pointed_thing.above.y
-	if dir == 0 then dir = -1 end
+	if dir == 0 then return itemstack end
 
 	local param2 = math.random(0, 3)
 	if dir > 0 then param2 = param2 + 20 end
@@ -74,7 +79,7 @@ for i = 1, 3 do
 		fixed = { -side, -0.5, -side, side, 0.5, side }
 	}
 
-	local groups = {dripstone = 1, attached_node = 1}
+	local groups = {dripstone = 1, attached_node = 2}
 	if i > 1 then
 		groups.not_in_creative_inventory = 1
 	end
@@ -85,6 +90,7 @@ for i = 1, 3 do
 		tiles = {"stones_testrock.png"},
 		drawtype = "mesh",
 		mesh = "stones_dripstone_" .. i .. ".obj",
+		sounds = sounds,
 		node_hp = 1,
 		paramtype = "light",
 		paramtype2 = "facedir",
