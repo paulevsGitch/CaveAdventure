@@ -1,6 +1,7 @@
 worldgen = {}
 
 local path = minetest.get_modpath("worldgen")
+worldgen.path = path
 
 dofile(path .. "/layer_api.lua")
 dofile(path .. "/layers.lua")

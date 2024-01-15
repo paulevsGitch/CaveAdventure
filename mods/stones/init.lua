@@ -74,7 +74,7 @@ for i = 1, 3 do
 		fixed = { -side, -0.5, -side, side, 0.5, side }
 	}
 
-	local groups = {dripstone = 1}
+	local groups = {dripstone = 1, attached_node = 1}
 	if i > 1 then
 		groups.not_in_creative_inventory = 1
 	end

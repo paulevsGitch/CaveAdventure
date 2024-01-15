@@ -77,7 +77,7 @@ local function fill_density(emin, emax)
 	end
 end
 
-local function fill_terrain(vm, emin)
+local function fill_terrain(emin)
 	local x, y, z, x1, y1, z1, x2, y2, z2, dx, dy, dz, a, b, c, d, e, f, g, h, dec_index
 
 	local stone = minetest.get_content_id("stones:limestone")
@@ -130,13 +130,40 @@ local function fill_terrain(vm, emin)
 	end
 end
 
+local function populate_terrain(vm, emin)
+end
+
+--local lake_1 = worldgen.path .. "/schematics/limestone_pool_1.mts"
+--local lake_2 = worldgen.path .. "/schematics/limestone_pool_2.mts"
+--
+--local function populate_terrain(vm, emin)
+--	local dec_index
+--	local pos = vector.new()
+--	for _, index in ipairs(index_table) do
+--		if node_data[index] == minetest.CONTENT_AIR and node_data[index - array_side_dy] ~= minetest.CONTENT_AIR and math.random(30) == 1 then
+--			dec_index = index - 1
+--			pos.x = (dec_index % array_side_dy) + emin.x
+--			pos.z = (math.floor(dec_index / array_side_dz)) + emin.z
+--			if math.random(4) == 1 then
+--				pos.y = (math.floor(dec_index / array_side_dy) % array_side_dy) + emin.y - 2
+--				minetest.place_schematic_on_vmanip(vm, pos, lake_1, "0", nil, true, "place_center_x, place_center_z")
+--			else
+--				pos.y = (math.floor(dec_index / array_side_dy) % array_side_dy) + emin.y - 3
+--				minetest.place_schematic_on_vmanip(vm, pos, lake_2, "0", nil, true, "place_center_x, place_center_z")
+--			end
+--		end
+--	end
+--end
+
 minetest.register_on_generated(function(minp, maxp, blockseed)
 	local vm, emin, emax = minetest.get_mapgen_object("voxelmanip")
 	vm:get_data(node_data)
 	init_index_table(emin, emax)
 	fill_density(emin, emax)
-	fill_terrain(vm, emin)
+	fill_terrain(emin)
+	populate_terrain(vm, emin)
 	vm:set_data(node_data)
+	-- populate_terrain(vm, emin)
 	vm:calc_lighting()
 	vm:get_light_data(light_data)
 	for index = 1, #light_data do
