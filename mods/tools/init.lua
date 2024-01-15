@@ -14,14 +14,11 @@ local dig_times = {}
 
 local cracks_textures = {}
 
-cracks_textures[1] = {"cracks1.png", "cracks1.png", "cracks1.png", "cracks1.png", "cracks1.png", "cracks1.png"}
-cracks_textures[2] = {"cracks2.png", "cracks2.png", "cracks2.png", "cracks2.png", "cracks2.png", "cracks2.png"}
-cracks_textures[3] = {"cracks3.png", "cracks3.png", "cracks3.png", "cracks3.png", "cracks3.png", "cracks3.png"}
-cracks_textures[4] = {"cracks4.png", "cracks4.png", "cracks4.png", "cracks4.png", "cracks4.png", "cracks4.png"}
-cracks_textures[5] = {"cracks5.png", "cracks5.png", "cracks5.png", "cracks5.png", "cracks5.png", "cracks5.png"}
-cracks_textures[6] = {"cracks6.png", "cracks6.png", "cracks6.png", "cracks6.png", "cracks6.png", "cracks6.png"}
-cracks_textures[7] = {"cracks7.png", "cracks7.png", "cracks7.png", "cracks7.png", "cracks7.png", "cracks7.png"}
-cracks_textures[8] = {"cracks8.png", "cracks8.png", "cracks8.png", "cracks8.png", "cracks8.png", "cracks8.png"}
+for i = 1,8 do
+    local name = "tools_dig_cracks" .. i .. ".png"
+    cracks_textures[i] = {}
+    for j = 1,6 do cracks_textures[i][j] = name end
+end
 
 minetest.register_entity(
     "tools:cracks",
@@ -52,10 +49,10 @@ minetest.register_on_punchnode(function(pos, oldnode, digger)
     if wielded and wielded:get_name() == "tools:pickaxe" then
         local node = minetest.get_node(pos)
         local nodedef = minetest.registered_nodes[node.name]
-        
+
         if not nodedef then return end
 
-        local node_hp = minetest.registered_nodes[node.name].node_hp or 3
+        local node_hp = node.node_hp or 3
 
         local dig_key = tools.vector_to_string(pos)
         local state = dig_state[dig_key]
