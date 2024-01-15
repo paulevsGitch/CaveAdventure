@@ -3,7 +3,18 @@ local S = minetest.get_translator()
 local path = minetest.get_modpath("fluids")
 --dofile(path .. "/underwater.lua")
 
-local texture = {
+local texture_source = {
+	name = "fluids_water.png",
+	backface_culling = false,
+	animation = {
+		type = "vertical_frames",
+		aspect_w = 16,
+		aspect_h = 16,
+		length = 8.0,
+	}
+}
+
+local texture_flowing = {
 	name = "fluids_water.png",
 	backface_culling = false,
 	animation = {
@@ -19,7 +30,7 @@ minetest.register_node("fluids:water_source", {
 	drawtype = "liquid",
 	leveled = 4,
 	waving = 3,
-	tiles = {texture, texture},
+	tiles = {texture_source, texture_source},
 	use_texture_alpha = "blend",
 	paramtype = "light",
 	sunlight_propagates = false,
@@ -42,8 +53,8 @@ minetest.register_node("fluids:water_flowing", {
 	description = S("Flowing Water"),
 	drawtype = "flowingliquid",
 	waving = 3,
-	tiles = {texture},
-	special_tiles = {texture, texture},
+	tiles = {texture_flowing},
+	special_tiles = {texture_flowing, texture_flowing},
 	use_texture_alpha = "blend",
 	paramtype = "light",
 	paramtype2 = "flowingliquid",

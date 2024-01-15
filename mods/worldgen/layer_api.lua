@@ -3,7 +3,7 @@ local LAYERS = {};
 local DEFAULT_LAYER = {
 	min_y = -32000,
 	max_y =  32000,
-	density_function = function (pos)
+	density_function = function (layer, pos)
 		return 1.0;
 	end
 }
