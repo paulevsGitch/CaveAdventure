@@ -29,4 +29,5 @@ local function register_ore(name, description, stone)
 	})
 end
 
+register_ore("coal_ore", "Coal Ore", "stones:limestone")
 register_ore("copper_ore", "Copper Ore", "stones:limestone")
