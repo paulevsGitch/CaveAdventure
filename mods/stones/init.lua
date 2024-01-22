@@ -77,7 +77,7 @@ local function update_dripstone (pos)
 	local pos2 = vector.subtract(pos, axis)
 	local node_def = minetest.registered_nodes[minetest.get_node(pos2).name]
 	if not node_def or not node_def.walkable or not (node_def.groups and node_def.groups.dripstone ~= 0) then
-		minetest.dig_node(pos)
+		minetest.dig_node(pos) -- will update recursively on its own
 	end
 end
 
