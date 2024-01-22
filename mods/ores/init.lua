@@ -1,7 +1,11 @@
 local S = minetest.get_translator("ores")
 
-local sounds = {
+local sounds_stone = {
 	footstep = {name = "stones_default_step", gain = 1.0}
+}
+
+local sounds_metal = {
+	footstep = {name = "ores_metal_step", gain = 1.0}
 }
 
 local function place_ore(itemstack, placer, pointed_thing)
@@ -22,7 +26,7 @@ local function register_ore(name, description, stone)
 		drawtype = "mesh",
 		mesh = "ores_ore_block.obj",
 		tiles = {stone_tex, ore_tex},
-		sounds = sounds,
+		sounds = sounds_stone,
 		node_hp = (stone_def.node_hp or 3) + 2,
 		paramtype2 = "facedir",
 		on_place = place_ore
@@ -46,19 +50,19 @@ local function register_metal(name, description, hp)
 		wield_image = image
 	})
 
-	minetest.register_node(tiles, {
-		description = S(description .. " Tiles"),
-		tiles = {"ores_" .. name .. "_tiles.png"},
-		groups = groups,
-		sounds = sounds,
-		node_hp = hp
-	})
-
 	minetest.register_node(block, {
 		description = S(description .. " Block"),
 		tiles = {"ores_" .. name .. "_block.png"},
 		groups = groups,
-		sounds = sounds,
+		sounds = sounds_metal,
+		node_hp = hp
+	})
+
+	minetest.register_node(tiles, {
+		description = S(description .. " Tiles"),
+		tiles = {"ores_" .. name .. "_tiles.png"},
+		groups = groups,
+		sounds = sounds_metal,
 		node_hp = hp
 	})
 
