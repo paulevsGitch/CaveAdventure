@@ -71,6 +71,16 @@ local function place_dripstone(itemstack, placer, pointed_thing)
 	return minetest.item_place_node(itemstack, placer, pointed_thing, param2)
 end
 
+local function update_dripstone (pos)
+	local node = minetest.get_node(pos)
+	local axis = math.facedir_axis(node.param2)
+	local pos2 = vector.subtract(pos, axis)
+	local node_def = minetest.registered_nodes[minetest.get_node(pos2).name]
+	if not node_def or not node_def.walkable or not (node_def.groups and node_def.groups.dripstone ~= 0) then
+		minetest.dig_node(pos)
+	end
+end
+
 for i = 1, 3 do
 	local side = 0.125 + (i - 1) * 0.125
 
@@ -79,7 +89,7 @@ for i = 1, 3 do
 		fixed = { -side, -0.5, -side, side, 0.5, side }
 	}
 
-	local groups = {dripstone = 1, attached_node = 2}
+	local groups = {dripstone = 1}
 	if i > 1 then
 		groups.not_in_creative_inventory = 1
 	end
@@ -97,6 +107,7 @@ for i = 1, 3 do
 		selection_box = box,
 		collision_box = box,
 		on_place = place_dripstone,
-		drop = "stones:dripstone_1"
+		drop = "stones:dripstone_1",
+		on_neighbour_update = update_dripstone
 	})
 end
