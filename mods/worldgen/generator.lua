@@ -131,6 +131,23 @@ local function fill_terrain(emin)
 end
 
 local function populate_terrain(vm, emin)
+	local roots = minetest.get_content_id("plants:roots")
+	local vines = minetest.get_content_id("plants:vines")
+	for _, index in ipairs(index_table) do
+		if node_data[index] == minetest.CONTENT_AIR and node_data[index + array_side_dy] ~= minetest.CONTENT_AIR and math.random(30) == 1 then
+			node_data[index] = roots
+			local vine_index = index
+			local random_length = math.random(5)
+			for i = 1, random_length, 1 do
+				vine_index = vine_index - array_side_dy
+				if node_data[vine_index] == minetest.CONTENT_AIR then
+					node_data[vine_index] = vines
+				else
+					break
+				end
+			end
+		end
+	end
 end
 
 --local lake_1 = worldgen.path .. "/schematics/limestone_pool_1.mts"
