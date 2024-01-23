@@ -3,6 +3,8 @@
 
 radial_menu = {}
 
+local RADIAL_MENU_ID = "radial_menu:block_variant"
+
 local function make_formscpec(selected_node, node_list)
 	local formspec_table = {
 		"formspec_version[7]",
@@ -21,7 +23,8 @@ local function make_formscpec(selected_node, node_list)
 		local px = 4.5 + math.sin(angle) * 3.0
 		local py = 3.5 - math.cos(angle) * 3.0
 		local desc = minetest.registered_items[node_list[i]].description
-		table.insert(formspec_table, "image_button[" .. (px - 1.0) .. "," .. (py + 0.75) .. ";3,1;blank.png;button_" .. i .. "_text;" .. desc .. ";false;false]")
+		-- Using buttons for centering text (no API for centered text in formspecs)
+		table.insert(formspec_table, "image_button[" .. (px - 1.5) .. "," .. (py + 0.75) .. ";4,1;blank.png;button_" .. i .. "_text;" .. desc .. ";false;false]")
 		table.insert(formspec_table, "image_button[" .. px .. "," .. py .. ";1,1;blank.png;button_" .. i .. ";;false;false]")
 		table.insert(formspec_table, "item_image[" .. px .. "," .. py .. ";1,1;" .. node_list[i] .. "]")
 	end
@@ -51,20 +54,49 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 end)
 
+radial_menu.register_variant_set = function (node_list)
+	for _, node_name in ipairs(node_list) do
+		local on_use = minetest.registered_nodes[node_name].on_use
+		local formspec = make_formscpec(node_name, node_list)
+
+		minetest.override_item(node_name, {
+			on_use = function(stack, player, pointed_thing)
+				local control = player:get_player_control()
+				if control.sneak then
+					SELECTED[player:get_player_name()] = node_list
+					minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
+					return nil
+				end
+				return on_use(stack, player, pointed_thing)
+			end
+		})
+	end
+end
+
 radial_menu.register_building_set = function (node_list)
 	for _, node_name in ipairs(node_list) do
+		local on_secondary_use = minetest.registered_nodes[node_name].on_secondary_use
 		local on_place = minetest.registered_nodes[node_name].on_place
 		local formspec = make_formscpec(node_name, node_list)
 
 		minetest.override_item(node_name, {
-			on_place = function(itemstack, placer, pointed_thing)
-				local control = placer:get_player_control()
+			on_place = function(stack, player, pointed_thing)
+				local control = player:get_player_control()
 				if control.sneak then
-					SELECTED[placer:get_player_name()] = node_list
-					minetest.show_formspec(placer:get_player_name(), "radial_menu:test", formspec)
-					return itemstack
+					SELECTED[player:get_player_name()] = node_list
+					minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
+					return stack
 				end
-				return on_place(itemstack, placer, pointed_thing)
+				return on_place(stack, player, pointed_thing)
+			end,
+			on_secondary_use = function(stack, player, pointed_thing)
+				local control = player:get_player_control()
+				if control.sneak then
+					SELECTED[player:get_player_name()] = node_list
+					minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
+					return nil
+				end
+				return on_secondary_use(stack, player, pointed_thing)
 			end
 		})
 	end
