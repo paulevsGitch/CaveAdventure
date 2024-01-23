@@ -22,11 +22,10 @@ local function make_formscpec(selected_node, node_list)
 		local angle = (i - 1) * 2.0 * math.pi / count
 		local px = 4.5 + math.sin(angle) * 3.0
 		local py = 3.5 - math.cos(angle) * 3.0
-		local desc = minetest.registered_items[node_list[i]].description
-		-- Using buttons for centering text (no API for centered text in formspecs)
-		table.insert(formspec_table, "image_button[" .. (px - 1.5) .. "," .. (py + 0.75) .. ";4,1;blank.png;button_" .. i .. "_text;" .. desc .. ";false;false]")
+		local desc = minetest.formspec_escape(minetest.registered_items[node_list[i]].description)
 		table.insert(formspec_table, "image_button[" .. px .. "," .. py .. ";1,1;blank.png;button_" .. i .. ";;false;false]")
 		table.insert(formspec_table, "item_image[" .. px .. "," .. py .. ";1,1;" .. node_list[i] .. "]")
+		table.insert(formspec_table, "tooltip[" .. px .. "," .. py .. ";1,1;" .. desc .. ";#00000033;#FFFFFFFF]")
 	end
 	
 	return table.concat(formspec_table)

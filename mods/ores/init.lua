@@ -33,6 +33,19 @@ local function register_ore(name, description, stone)
 	})
 end
 
+local function register_variants (node_name, name)
+	node_shapes.register_slab(node_name)
+	node_shapes.register_stairs(node_name)
+	local side = "ores_" .. name .. "_pillar_side.png"
+	local top = "ores_" .. name .. "_pillar_top.png"
+	node_shapes.register_pillar(node_name, {
+		tiles = {top, top, side}
+	})
+	node_shapes.register_thin_pillar(node_name, {
+		tiles = {top, top, side}
+	})
+end
+
 local function register_metal(name, description, hp)
 	local ingot = "ores:" .. name .. "_ingot"
 	local block = "ores:" .. name .. "_block"
@@ -66,8 +79,8 @@ local function register_metal(name, description, hp)
 		node_hp = hp
 	})
 
-	node_shapes.register_variants(block, description .. " Block")
-	node_shapes.register_variants(tiles, description .. " Tiles")
+	register_variants(block, name)
+	register_variants(tiles, name)
 
 	radial_menu.register_shapes_set({
 		block,

@@ -54,13 +54,32 @@ local function simple_facedir(dir)
 	end
 end
 
+local function world_align_textures(tiles)
+	for index, texture in ipairs(tiles) do
+		if type("texture") == "string" then
+			tiles[index] = {
+				name = texture,
+				backface_culling = true,
+				align_style="world"
+			}
+		end
+	end
+end
+
+local function apply_overrides(def, overrides)
+	if not overrides then return end
+	for k, v in pairs(overrides) do
+		def[k] = v
+	end
+end
+
 local function place_slab(itemstack, placer, pointed_thing)
 	local node = minetest.get_node(pointed_thing.under)
 	local dir = vector.subtract(pointed_thing.under, pointed_thing.above)
 	local index = minetest.dir_to_wallmounted(dir)
 	if minetest.get_node_group(node.name, "slab") > 0 and not placer:get_player_control().sneak then
 		if index == node.param2 then
-			node.name = node.name .. "_double"
+			node.name = node.name .. "_double_slab"
 			minetest.set_node(pointed_thing.under, node)
 			if not minetest.is_creative_enabled(placer:get_player_name()) then
 				itemstack:set_count(itemstack:get_count() - 1)
@@ -134,8 +153,10 @@ local function place_pillar(itemstack, placer, pointed_thing)
 	return minetest.item_place(itemstack, placer, pointed_thing, index)
 end
 
-node_shapes.register_slab = function (node_name, node_description)
+node_shapes.register_slab = function (node_name, overrides)
 	local def = table.copy(minetest.registered_nodes[node_name])
+	world_align_textures(def.tiles)
+	apply_overrides(def, overrides)
 	if not def.groups then def.groups = {} end
 	def.groups.slab = 1
 	
@@ -157,8 +178,10 @@ node_shapes.register_slab = function (node_name, node_description)
 	minetest.register_node(node_name .. "_double_slab", def)
 end
 
-node_shapes.register_stairs = function (node_name, node_description)
+node_shapes.register_stairs = function (node_name, overrides)
 	local def = table.copy(minetest.registered_nodes[node_name])
+	apply_overrides(def, overrides)
+	world_align_textures(def.tiles)
 	if not def.groups then def.groups = {} end
 	def.groups.stairs = 1
 
@@ -172,8 +195,9 @@ node_shapes.register_stairs = function (node_name, node_description)
 	minetest.register_node(node_name .. "_stairs", def)
 end
 
-node_shapes.register_pillar = function (node_name, node_description)
+node_shapes.register_pillar = function (node_name, overrides)
 	local def = table.copy(minetest.registered_nodes[node_name])
+	apply_overrides(def, overrides)
 	if not def.groups then def.groups = {} end
 	def.groups.pillar = 1
 
@@ -184,8 +208,9 @@ node_shapes.register_pillar = function (node_name, node_description)
 	minetest.register_node(node_name .. "_pillar", def)
 end
 
-node_shapes.register_thin_pillar = function (node_name, node_description)
+node_shapes.register_thin_pillar = function (node_name, overrides)
 	local def = table.copy(minetest.registered_nodes[node_name])
+	apply_overrides(def, overrides)
 	if not def.groups then def.groups = {} end
 	def.groups.thin_pillar = 1
 
@@ -196,11 +221,4 @@ node_shapes.register_thin_pillar = function (node_name, node_description)
 	def.node_box = PILLAR_BOX
 
 	minetest.register_node(node_name .. "_thin_pillar", def)
-end
-
-node_shapes.register_variants = function (node_name, node_description)
-	node_shapes.register_slab(node_name, node_description)
-	node_shapes.register_stairs(node_name, node_description)
-	node_shapes.register_pillar(node_name, node_description)
-	node_shapes.register_thin_pillar(node_name, node_description)
 end
