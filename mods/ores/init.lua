@@ -69,7 +69,7 @@ local function register_metal(name, description, hp)
 	node_shapes.register_variants(block, description .. " Block")
 	node_shapes.register_variants(tiles, description .. " Tiles")
 
-	radial_menu.register_building_set({
+	radial_menu.register_shapes_set({
 		block,
 		block .. "_slab",
 		block .. "_stairs",
@@ -77,7 +77,7 @@ local function register_metal(name, description, hp)
 		block .. "_thin_pillar"
 	})
 
-	radial_menu.register_building_set({
+	radial_menu.register_shapes_set({
 		tiles,
 		tiles .. "_slab",
 		tiles .. "_stairs",

@@ -62,18 +62,22 @@ radial_menu.register_variant_set = function (node_list)
 		minetest.override_item(node_name, {
 			on_use = function(stack, player, pointed_thing)
 				local control = player:get_player_control()
+
 				if control.sneak then
 					SELECTED[player:get_player_name()] = node_list
 					minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
-					return nil
+					return
 				end
-				return on_use(stack, player, pointed_thing)
+
+				if on_use then
+					return on_use(stack, player, pointed_thing)
+				end
 			end
 		})
 	end
 end
 
-radial_menu.register_building_set = function (node_list)
+radial_menu.register_shapes_set = function (node_list)
 	for _, node_name in ipairs(node_list) do
 		local on_secondary_use = minetest.registered_nodes[node_name].on_secondary_use
 		local on_place = minetest.registered_nodes[node_name].on_place
@@ -82,21 +86,27 @@ radial_menu.register_building_set = function (node_list)
 		minetest.override_item(node_name, {
 			on_place = function(stack, player, pointed_thing)
 				local control = player:get_player_control()
+
 				if control.sneak then
 					SELECTED[player:get_player_name()] = node_list
 					minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
 					return stack
 				end
+				
 				return on_place(stack, player, pointed_thing)
 			end,
 			on_secondary_use = function(stack, player, pointed_thing)
 				local control = player:get_player_control()
+
 				if control.sneak then
 					SELECTED[player:get_player_name()] = node_list
 					minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
-					return nil
+					return
 				end
-				return on_secondary_use(stack, player, pointed_thing)
+
+				if on_secondary_use then
+					return on_secondary_use(stack, player, pointed_thing)
+				end
 			end
 		})
 	end
