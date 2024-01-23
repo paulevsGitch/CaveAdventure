@@ -84,15 +84,16 @@ radial_menu.register_shapes_set = function (node_list)
 
 		minetest.override_item(node_name, {
 			on_place = function(stack, player, pointed_thing)
-				local control = player:get_player_control()
-
-				if control.sneak then
-					SELECTED[player:get_player_name()] = node_list
-					minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
-					return stack
+				if not on_place then
+					local control = player:get_player_control()
+					if control.sneak then
+						SELECTED[player:get_player_name()] = node_list
+						minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
+						return stack
+					end
+				else
+					return on_place(stack, player, pointed_thing)
 				end
-				
-				return on_place(stack, player, pointed_thing)
 			end,
 			on_secondary_use = function(stack, player, pointed_thing)
 				local control = player:get_player_control()
