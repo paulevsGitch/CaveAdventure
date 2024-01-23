@@ -1,11 +1,17 @@
 local S = minetest.get_translator("ores")
 
 local sounds_stone = {
-	footstep = {name = "stones_default_step", gain = 1.0}
+	footstep = {name = "stones_default_step", gain = 1.0},
+	dig = {name = "stones_default_step", gain = 0.25},
+	dug = {name = "stones_default_step", gain = 0.25},
+	place = {name = "stones_default_step", gain = 1.0}
 }
 
 local sounds_metal = {
-	footstep = {name = "ores_metal_step", gain = 1.0}
+	footstep = {name = "ores_metal_step", gain = 1.0},
+	dig = {name = "ores_metal_step", gain = 0.25},
+	dug = {name = "ores_metal_step", gain = 0.25},
+	place = {name = "ores_metal_step", gain = 1.0}
 }
 
 local function place_ore(itemstack, placer, pointed_thing)

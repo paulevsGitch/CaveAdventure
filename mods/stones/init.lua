@@ -1,7 +1,10 @@
 local S = minetest.get_translator("stones")
 
 local sounds = {
-	footstep = {name = "stones_default_step", gain = 1.0}
+	footstep = {name = "stones_default_step", gain = 1.0},
+	dig = {name = "stones_default_step", gain = 0.25},
+	dug = {name = "stones_default_step", gain = 0.25},
+	place = {name = "stones_default_step", gain = 0.5}
 }
 
 minetest.register_node("stones:limestone", {
