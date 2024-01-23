@@ -66,7 +66,28 @@ local function register_metal(name, description, hp)
 		node_hp = hp
 	})
 
-	radial_menu.register_building_set({block, tiles})
+	node_shapes.register_variants(block, description .. " Block")
+	node_shapes.register_variants(tiles, description .. " Tiles")
+
+	radial_menu.register_building_set({
+		block,
+		tiles,
+		block .. "_slab",
+		block .. "_stairs",
+		block .. "_pillar",
+		block .. "_thin_pillar"
+	})
+
+	radial_menu.register_building_set({
+		block,
+		tiles,
+		tiles .. "_slab",
+		tiles .. "_stairs",
+		tiles .. "_pillar",
+		tiles .. "_thin_pillar"
+	})
+
+	--radial_menu.register_building_set({block, tiles})
 
 	minetest.register_craft({
 		output = block,
