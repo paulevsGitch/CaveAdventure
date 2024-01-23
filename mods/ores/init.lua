@@ -66,19 +66,13 @@ local function register_metal(name, description, hp)
 		node_hp = hp
 	})
 
+	radial_menu.register_building_set({block, tiles})
+
 	minetest.register_craft({
 		output = block,
 		recipe = {
 			{ ingot, ingot },
 			{ ingot, ingot }
-		},
-	})
-
-	minetest.register_craft({
-		output = tiles .. " 4",
-		recipe = {
-			{ block, block },
-			{ block, block }
 		},
 	})
 
