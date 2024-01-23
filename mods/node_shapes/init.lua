@@ -1,6 +1,11 @@
 node_shapes = {}
 
-local S = minetest.get_translator()
+local S = minetest.get_translator("node_shapes")
+
+local DESC_SLAB = S("Slab")
+local DESC_STAIRS = S("Stairs")
+local DESC_PILLAR = S("Pillar")
+local DESC_THIN_PILLAR = S("Thin Pillar")
 
 local SLAB_BOX = {
 	type = "fixed",
@@ -134,7 +139,7 @@ node_shapes.register_slab = function (node_name, node_description)
 	if not def.groups then def.groups = {} end
 	def.groups.slab = 1
 	
-	def.description = S(node_description .. " Slab")
+	def.description = def.description .. " [" .. DESC_SLAB .. "]"
 	def.drawtype = "nodebox"
 	def.paramtype = "light"
 	def.paramtype2 = "wallmounted"
@@ -157,7 +162,7 @@ node_shapes.register_stairs = function (node_name, node_description)
 	if not def.groups then def.groups = {} end
 	def.groups.stairs = 1
 
-	def.description = S(node_description .. " Pillar")
+	def.description = def.description .. " [" .. DESC_STAIRS .. "]"
 	def.drawtype = "nodebox"
 	def.paramtype = "light"
 	def.paramtype2 = "facedir"
@@ -172,7 +177,7 @@ node_shapes.register_pillar = function (node_name, node_description)
 	if not def.groups then def.groups = {} end
 	def.groups.pillar = 1
 
-	def.description = S(node_description .. " Pillar")
+	def.description = def.description .. " [" .. DESC_PILLAR .. "]"
 	def.paramtype2 = "wallmounted"
 	def.on_place = place_pillar
 
@@ -184,7 +189,7 @@ node_shapes.register_thin_pillar = function (node_name, node_description)
 	if not def.groups then def.groups = {} end
 	def.groups.thin_pillar = 1
 
-	def.description = S(node_description .. " Thin Pillar")
+	def.description = def.description .. " [" .. DESC_THIN_PILLAR .. "]"
 	def.drawtype = "nodebox"
 	def.paramtype = "light"
 	def.connects_to = {"group:thin_pillar"}
