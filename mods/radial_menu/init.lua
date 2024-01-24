@@ -81,19 +81,21 @@ radial_menu.register_shapes_set = function (node_list)
 		local on_secondary_use = minetest.registered_nodes[node_name].on_secondary_use
 		local on_place = minetest.registered_nodes[node_name].on_place
 		local formspec = make_formscpec(node_name, node_list)
+		local can_apply = string.find(minetest.serialize(on_place), "sneak", 1, true) == nil
 
 		minetest.override_item(node_name, {
 			on_place = function(stack, player, pointed_thing)
-				if not on_place then
+				if can_apply then
 					local control = player:get_player_control()
+					
 					if control.sneak then
 						SELECTED[player:get_player_name()] = node_list
 						minetest.show_formspec(player:get_player_name(), RADIAL_MENU_ID, formspec)
 						return stack
 					end
-				else
-					return on_place(stack, player, pointed_thing)
 				end
+
+				return on_place(stack, player, pointed_thing)
 			end,
 			on_secondary_use = function(stack, player, pointed_thing)
 				local control = player:get_player_control()
