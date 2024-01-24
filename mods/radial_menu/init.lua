@@ -39,7 +39,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	for k, _ in pairs(fields) do
 		if string.sub(k, 1, 6) == "button" then
-			local name = string.gsub(string.sub(k, 8, -1), "_text", "")
+			local name = string.sub(k, 8, -1)
 			button_index = tonumber(name, 10)
 		end
 	end
