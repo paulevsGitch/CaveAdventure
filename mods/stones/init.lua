@@ -9,7 +9,7 @@ local sounds = {
 
 minetest.register_node("stones:limestone", {
 	description = S("Limestone"),
-	tiles = {"stones_testrock.png"},
+	tiles = {"test_limestone_5.png"},
 	sounds = sounds,
 	node_hp = 3
 })
@@ -100,7 +100,7 @@ for i = 1, 3 do
 	minetest.register_node("stones:dripstone_" .. i, {
 		description = S("Dripstone"),
 		groups = groups,
-		tiles = {"stones_testrock.png"},
+		tiles = {"test_limestone_5.png"},
 		drawtype = "mesh",
 		mesh = "stones_dripstone_" .. i .. ".obj",
 		sounds = sounds,

@@ -15,7 +15,8 @@ local sounds_metal = {
 }
 
 local function place_ore(itemstack, placer, pointed_thing)
-	return minetest.item_place_node(itemstack, placer, pointed_thing, math.random(24))
+	local rotation = math.random(0, 1) * 20 + math.random(0, 1) * 2
+	return minetest.item_place_node(itemstack, placer, pointed_thing, rotation)
 end
 
 local function register_ore(name, description, stone)
