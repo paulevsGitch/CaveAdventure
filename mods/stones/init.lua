@@ -34,38 +34,25 @@ local function register_stone_set(name, description)
 	})
 
 	node_shapes.register_variants(block)
-	node_shapes.register_variants(big_tile)
-	node_shapes.register_variants(tiles)
+
+	node_shapes.register_slab(big_tile)
+	node_shapes.register_stairs(big_tile)
+
+	node_shapes.register_slab(tiles)
+	node_shapes.register_stairs(tiles)
 
 	radial_menu.register_shapes_set({
 		block,
 		block .. "_slab",
 		block .. "_stairs",
 		block .. "_pillar",
-		block .. "_thin_pillar"
-	})
-
-	radial_menu.register_shapes_set({
+		block .. "_thin_pillar",
 		big_tile,
 		big_tile .. "_slab",
 		big_tile .. "_stairs",
-		big_tile .. "_pillar",
-		big_tile .. "_thin_pillar"
-	})
-
-	radial_menu.register_shapes_set({
-		tiles,
 		tiles .. "_slab",
-		tiles .. "_stairs",
-		tiles .. "_pillar",
-		tiles .. "_thin_pillar"
+		tiles .. "_stairs"
 	})
-
-	radial_menu.register_variant_set({ block, big_tile, tiles })
-	radial_menu.register_variant_set({ block .. "_slab", big_tile .. "_slab", tiles .. "_slab" })
-	radial_menu.register_variant_set({ block .. "_stairs", big_tile .. "_stairs", tiles .. "_stairs" })
-	radial_menu.register_variant_set({ block .. "_pillar", big_tile .. "_pillar", tiles .. "_pillar" })
-	radial_menu.register_variant_set({ block .. "_thin_pillar", big_tile .. "_thin_pillar", tiles .. "_thin_pillar" })
 end
 
 register_stone_set("limestone", "Limestone")
