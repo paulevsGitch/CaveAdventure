@@ -7,16 +7,72 @@ local sounds = {
 	place = {name = "stones_default_step", gain = 0.5}
 }
 
-minetest.register_node("stones:limestone", {
-	description = S("Limestone"),
-	tiles = {"test_limestone_5.png"},
-	sounds = sounds,
-	node_hp = 3
-})
+local function register_stone_set(name, description)
+	local block = "stones:" .. name
+	local big_tile = "stones:" .. name .. "_big_tile"
+	local tiles = "stones:" .. name .. "tiles"
+
+	minetest.register_node(block, {
+		description = S(description),
+		tiles = {"stones_" .. name .. ".png"},
+		sounds = sounds,
+		node_hp = 3
+	})
+
+	minetest.register_node(big_tile, {
+		description = S(description .. " Big Tile"),
+		tiles = {"stones_" .. name .. "_big_tile.png"},
+		sounds = sounds,
+		node_hp = 3
+	})
+
+	minetest.register_node(tiles, {
+		description = S(description .. " Tiles"),
+		tiles = {"stones_" .. name .. "_tiles.png"},
+		sounds = sounds,
+		node_hp = 3
+	})
+
+	node_shapes.register_variants(block)
+	node_shapes.register_variants(big_tile)
+	node_shapes.register_variants(tiles)
+
+	radial_menu.register_shapes_set({
+		block,
+		block .. "_slab",
+		block .. "_stairs",
+		block .. "_pillar",
+		block .. "_thin_pillar"
+	})
+
+	radial_menu.register_shapes_set({
+		big_tile,
+		big_tile .. "_slab",
+		big_tile .. "_stairs",
+		big_tile .. "_pillar",
+		big_tile .. "_thin_pillar"
+	})
+
+	radial_menu.register_shapes_set({
+		tiles,
+		tiles .. "_slab",
+		tiles .. "_stairs",
+		tiles .. "_pillar",
+		tiles .. "_thin_pillar"
+	})
+
+	radial_menu.register_variant_set({ block, big_tile, tiles })
+	radial_menu.register_variant_set({ block .. "_slab", big_tile .. "_slab", tiles .. "_slab" })
+	radial_menu.register_variant_set({ block .. "_stairs", big_tile .. "_stairs", tiles .. "_stairs" })
+	radial_menu.register_variant_set({ block .. "_pillar", big_tile .. "_pillar", tiles .. "_pillar" })
+	radial_menu.register_variant_set({ block .. "_thin_pillar", big_tile .. "_thin_pillar", tiles .. "_thin_pillar" })
+end
+
+register_stone_set("limestone", "Limestone")
 
 minetest.register_node("stones:debug", {
 	description = S("Debug Light"),
-	tiles = {"stones_limestone.png"},
+	tiles = {"stones_debug.png"},
 	light_source = minetest.LIGHT_MAX,
 	sounds = sounds,
 	node_hp = 8
@@ -100,7 +156,7 @@ for i = 1, 3 do
 	minetest.register_node("stones:dripstone_" .. i, {
 		description = S("Dripstone"),
 		groups = groups,
-		tiles = {"test_limestone_5.png"},
+		tiles = {"stones_limestone.png"},
 		drawtype = "mesh",
 		mesh = "stones_dripstone_" .. i .. ".obj",
 		sounds = sounds,

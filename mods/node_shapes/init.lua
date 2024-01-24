@@ -100,7 +100,7 @@ local function place_slab(itemstack, placer, pointed_thing)
 	local index = minetest.dir_to_wallmounted(dir)
 	if minetest.get_node_group(node.name, "slab") > 0 and not placer:get_player_control().sneak then
 		if index == node.param2 then
-			node.name = node.name .. "_double_slab"
+			node.name = string.gsub(node.name, "slab", "double_slab")
 			minetest.set_node(pointed_thing.under, node)
 			if not minetest.is_creative_enabled(placer:get_player_name()) then
 				itemstack:set_count(itemstack:get_count() - 1)
@@ -302,6 +302,9 @@ node_shapes.register_slab = function (node_name, overrides)
 	minetest.register_node(node_name .. "_slab", def)
 	
 	def = table.copy(def)
+	def.selection_box = nil
+	def.node_box = nil
+	def.drawtype = nil
 	def.groups.not_in_creative_inventory = 1
 	def.groups.double_slab = 1
 	def.groups.slab = nil
@@ -385,4 +388,18 @@ node_shapes.register_thin_pillar = function(node_name, overrides)
 	def.mesh = "node_shapes_thin_pillar_middle.obj"
 	def.tiles = {tex_pref .. "_middle.png"}
 	minetest.register_node(pillar .. "_middle", def)
+end
+
+node_shapes.register_variants = function(node_name)
+	node_shapes.register_slab(node_name)
+	node_shapes.register_stairs(node_name)
+	local prefix = string.gsub(node_name, ":", "_")
+	local side = prefix .. "_pillar_side.png"
+	local top = prefix .. "_pillar_top.png"
+	node_shapes.register_pillar(node_name, {
+		tiles = {top, top, side}
+	})
+	node_shapes.register_thin_pillar(node_name, {
+		tiles = {top, top, side}
+	})
 end

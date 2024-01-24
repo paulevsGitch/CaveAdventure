@@ -86,8 +86,8 @@ local function register_metal(name, description, hp)
 		node_hp = hp
 	})
 
-	register_variants(block, name .. "_block")
-	register_variants(tiles, name .. "_tiles")
+	node_shapes.register_variants(block)
+	node_shapes.register_variants(tiles)
 
 	radial_menu.register_shapes_set({
 		block,
