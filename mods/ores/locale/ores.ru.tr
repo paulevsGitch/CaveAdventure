@@ -1,5 +1,10 @@
 # textdomain: ores
+
 Coal Ore=Угольная руда
 Copper Ore=Медная руда
+
+Copper Ingot=Медный слиток
+
 Copper Block=Медный блок
 Copper Tiles=Медная плитка
+Copper Small Tiles=Маленькая медная плитка

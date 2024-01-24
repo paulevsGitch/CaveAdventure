@@ -57,6 +57,7 @@ local function register_metal(name, description, hp)
 	local ingot = "ores:" .. name .. "_ingot"
 	local block = "ores:" .. name .. "_block"
 	local tiles = "ores:" .. name .. "_tiles"
+	local small_tiles = "ores:" .. name .. "_small_tiles"
 
 	local image = "ores_" .. name .. "_ingot.png"
 	local group = name .. "_ingot_source"
@@ -86,8 +87,21 @@ local function register_metal(name, description, hp)
 		node_hp = hp
 	})
 
+	minetest.register_node(small_tiles, {
+		description = S(description .. " Small Tiles"),
+		tiles = {"ores_" .. name .. "_small_tiles.png"},
+		groups = groups,
+		sounds = sounds_metal,
+		node_hp = hp
+	})
+
 	node_shapes.register_variants(block)
-	node_shapes.register_variants(tiles)
+
+	node_shapes.register_slab(tiles)
+	node_shapes.register_stairs(tiles)
+
+	node_shapes.register_slab(small_tiles)
+	node_shapes.register_stairs(small_tiles)
 
 	radial_menu.register_shapes_set({
 		block,
@@ -98,8 +112,9 @@ local function register_metal(name, description, hp)
 		tiles,
 		tiles .. "_slab",
 		tiles .. "_stairs",
-		tiles .. "_pillar",
-		tiles .. "_thin_pillar"
+		small_tiles,
+		small_tiles .. "_slab",
+		small_tiles .. "_stairs"
 	})
 
 	minetest.register_craft({
