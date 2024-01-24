@@ -34,7 +34,10 @@ end
 local SELECTED = {}
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-	local node_list = SELECTED[player:get_player_name()]
+	if formname ~= RADIAL_MENU_ID then return end
+	
+	local name = player:get_player_name()
+	local node_list = SELECTED[name]
 	local button_index = 0
 
 	for k, _ in pairs(fields) do
@@ -50,6 +53,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		local stack = inventory:get_stack("main", index)
 		stack:set_name(node_list[button_index])
 		inventory:set_stack("main", index, stack)
+		minetest.close_formspec(name, formname)
 	end
 end)
 
