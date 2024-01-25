@@ -6,7 +6,6 @@ local function debug_feature (context)
 		pos.y = y
 		context.set_node(pos, debug)
 	end
-	minetest.debug("Place")
 end
 
 worldgen.biome_map.register_biome({

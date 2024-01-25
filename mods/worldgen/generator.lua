@@ -114,8 +114,6 @@ end
 
 local function fill_terrain(emin)
 	local x, y, z, x1, y1, z1, x2, y2, z2, dx, dy, dz, a, b, c, d, e, f, g, h, dec_index
-
-	local stone = minetest.get_content_id("stones:limestone")
 	local stone2 = minetest.get_content_id("stones:debug")
 
 	for _, index in ipairs(index_table) do
