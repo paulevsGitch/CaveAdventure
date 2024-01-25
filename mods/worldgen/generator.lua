@@ -1,26 +1,61 @@
 local index_table = {}
 local node_data = {}
+local param2_data = {}
 local light_data = {}
 local array_side_dy
 local array_side_dz
 local section_count
 local density = {}
 local layer_cache = {}
+local place_index = 0
+local max_chunk
+local gen_side
 
 local CELL_SIZE = 4
+
+local NODE_GET_DATA = { name = "", param2 = 0 }
+
+local FEATURE_CONTEXT = {
+	get_node = function(pos)
+		local index = place_index + pos.x + pos.y * array_side_dy + pos.z * array_side_dz
+		NODE_GET_DATA.name = minetest.get_name_from_content_id(node_data[index])
+		NODE_GET_DATA.param2 = param2_data[index]
+		return NODE_GET_DATA
+	end,
+	set_node = function(pos, node)
+		local index = place_index + pos.x + pos.y * array_side_dy + pos.z * array_side_dz
+		node_data[index] = minetest.get_content_id(node.name)
+		param2_data[index] = node.param2 or 0
+	end
+}
+
+local BIOME_OFFSETS = {
+	{x =  0, y =  0, z =  0},
+	{x = 15, y =  0, z =  0},
+	{x =  0, y = 15, z =  0},
+	{x = 15, y = 15, z =  0},
+	{x =  0, y =  0, z = 15},
+	{x = 15, y =  0, z = 15},
+	{x =  0, y = 15, z = 15},
+	{x = 15, y = 15, z = 15}
+}
+
+local BIOME_LIST = {}
+local biome_list_size = 1
 
 local function init_index_table(emin, emax)
 	if #index_table > 0 then
 		return
 	end
 
-	local side = emax.x - emin.x
+	gen_side = emax.x - emin.x
 	local min_side = 16
-	local max_side = side - 16
+	local max_side = gen_side - 16
 
-	array_side_dy = side + 1
+	array_side_dy = gen_side + 1
 	array_side_dz = array_side_dy * array_side_dy
 	local size = array_side_dy * array_side_dz
+	max_chunk = math.floor(gen_side / 16) - 1
 
 	index_table = {}
 
@@ -122,65 +157,131 @@ local function fill_terrain(emin)
 		b = math.lerp(c, d, dz)
 
 		if math.lerp(a, b, dy) > 0 then
-			node_data[index] = stone
-			if math.random(64) == 1 then
-				node_data[index] = stone2
-			end
-		end
-	end
-end
-
-local function populate_terrain(vm, emin)
-	local roots = minetest.get_content_id("plants:roots")
-	local vines = minetest.get_content_id("plants:vines")
-	for _, index in ipairs(index_table) do
-		if node_data[index] == minetest.CONTENT_AIR and node_data[index + array_side_dy] ~= minetest.CONTENT_AIR and math.random(30) == 1 then
-			node_data[index] = roots
-			local vine_index = index
-			local random_length = math.random(5)
-			for i = 1, random_length, 1 do
-				vine_index = vine_index - array_side_dy
-				if node_data[vine_index] == minetest.CONTENT_AIR then
-					node_data[vine_index] = vines
-				else
-					break
+			local biome = worldgen.biome_map[index]
+			if math.lerp(a, b, dy + 1) <= 0 then
+				node_data[index] = biome.surface
+			else
+				node_data[index] = biome.filler
+				if math.random(64) == 1 then
+					node_data[index] = stone2
 				end
 			end
 		end
 	end
 end
 
---local lake_1 = worldgen.path .. "/schematics/limestone_pool_1.mts"
---local lake_2 = worldgen.path .. "/schematics/limestone_pool_2.mts"
---
---local function populate_terrain(vm, emin)
---	local dec_index
---	local pos = vector.new()
---	for _, index in ipairs(index_table) do
---		if node_data[index] == minetest.CONTENT_AIR and node_data[index - array_side_dy] ~= minetest.CONTENT_AIR and math.random(30) == 1 then
---			dec_index = index - 1
---			pos.x = (dec_index % array_side_dy) + emin.x
---			pos.z = (math.floor(dec_index / array_side_dz)) + emin.z
---			if math.random(4) == 1 then
---				pos.y = (math.floor(dec_index / array_side_dy) % array_side_dy) + emin.y - 2
---				minetest.place_schematic_on_vmanip(vm, pos, lake_1, "0", nil, true, "place_center_x, place_center_z")
---			else
---				pos.y = (math.floor(dec_index / array_side_dy) % array_side_dy) + emin.y - 3
---				minetest.place_schematic_on_vmanip(vm, pos, lake_2, "0", nil, true, "place_center_x, place_center_z")
---			end
---		end
---	end
---end
+local function floor_feature_place(feature, min_x, min_y, min_z, surface)
+	local px = math.random(0, 15) + min_x
+	local pz = math.random(0, 15) + min_z
+	local i_xz = px + pz * array_side_dz
+	for py = min_y + 15, min_y, -1 do
+		local index = i_xz + py * array_side_dy
+		if node_data[index] == surface then
+			place_index = index + array_side_dy
+			feature(FEATURE_CONTEXT)
+		end
+	end
+end
+
+local function volume_feature_place(feature, min_x, min_y, min_z)
+	local px = math.random(0, 15) + min_x
+	local py = math.random(0, 15) + min_y
+	local pz = math.random(0, 15) + min_z
+	place_index = px + py * array_side_dy + pz * array_side_dz
+	if node_data[place_index] == minetest.CONTENT_AIR then
+		feature(FEATURE_CONTEXT)
+	end
+end
+
+local function ceiling_feature_place(feature, min_x, min_y, min_z, ceil)
+	local px = math.random(0, 15) + min_x
+	local pz = math.random(0, 15) + min_z
+	local i_xz = px + pz * array_side_dz
+	for py = min_y, min_y + 15 do
+		local index = i_xz + py * array_side_dy
+		if node_data[index] == ceil then
+			place_index = index - array_side_dy
+			feature(FEATURE_CONTEXT)
+		end
+	end
+end
+
+local function collect_biomes(min_x, min_y, min_z)
+	local index = (min_z + 8) * array_side_dz + (min_y + 8) * array_side_dy + min_x + 9
+	BIOME_LIST[1] = worldgen.biome_map[index]
+	biome_list_size = 1
+
+	for _, offset in ipairs(BIOME_OFFSETS) do
+		local x = min_x + offset.x
+		local y = min_y + offset.y
+		local z = min_z + offset.z
+
+		index = z * array_side_dz + y * array_side_dy + x + 1
+		local biome = worldgen.biome_map[index]
+		
+		for n = 1, biome_list_size do
+			if BIOME_LIST[n].id == biome.id then
+				goto search_end
+			end
+		end
+
+		biome_list_size = biome_list_size + 1
+		BIOME_LIST[biome_list_size] = biome
+
+		::search_end::
+	end
+end
+
+local function place_feature(entry, min_x, min_y, min_z, biome)
+	if entry.type == worldgen.feature_types.FLOOR then
+		floor_feature_place(entry.feature, min_x, min_y, min_z, biome.surface)
+	elseif entry.type == worldgen.feature_types.VOLUME then
+		volume_feature_place(entry.feature, min_x, min_y, min_z)
+	elseif entry.type == worldgen.feature_types.CEILING then
+		ceiling_feature_place(entry.feature, min_x, min_y, min_z, biome.filler)
+	end
+end
+
+local function populate_terrain()
+	for cy = 1, max_chunk do
+		local min_y = bit.lshift(cy, 4)
+		for cx = 1, max_chunk do
+			local min_x = bit.lshift(cx, 4)
+			for cz = 1, max_chunk do
+				local min_z = bit.lshift(cz, 4)
+				collect_biomes(min_x, min_y, min_z)
+				for n = 1, biome_list_size do
+					local biome = BIOME_LIST[n]
+					if biome.features then
+						for _, entry in ipairs(biome.features) do
+							if entry.count < 1 then
+								if math.random() < entry.count then
+									place_feature(entry, min_x, min_y, min_z, biome)
+								end
+							else
+								for i = 1, entry.count do
+									place_feature(entry, min_x, min_y, min_z, biome)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
 
 minetest.register_on_generated(function(minp, maxp, blockseed)
 	local vm, emin, emax = minetest.get_mapgen_object("voxelmanip")
 	vm:get_data(node_data)
+	vm:get_param2_data(param2_data)
 	init_index_table(emin, emax)
+	worldgen.biome_map.fill_map(emin, gen_side)
 	fill_density(emin, emax)
 	fill_terrain(emin)
-	populate_terrain(vm, emin)
+	populate_terrain()
 	vm:set_data(node_data)
-	-- populate_terrain(vm, emin)
+	vm:set_param2_data(param2_data)
 	vm:calc_lighting()
 	vm:get_light_data(light_data)
 	for index = 1, #light_data do
