@@ -45,7 +45,7 @@ minetest.register_entity(
             collide_with_objects = false,
             visual = "wielditem",
             visual_size = vector.new(0.5, 0.5, 0.5),
-            textures = {"emerald_pickaxe.png"},
+        
             pointable = false,
             static_save = false
         }
@@ -62,7 +62,8 @@ minetest.register_on_joinplayer(function(player_ref, last_login)
         local player_pos = player_ref:get_pos()
         local wield_entity = minetest.add_entity(player_pos, "tools:tool")
 
-        wield_entity:set_attach(player_ref, "", {x = 5, y = 10, z = 10}, {x = 0, y = 90, z = 0}, true)
+        wield_entity:set_attach(player_ref, "", {x = 5, y = 10, z = 5}, {x = 0, y = -90, z = 0}, true)
+        wield_entity:set_properties({wield_item = "tools:pickaxe"})
 
         player_wield_items[player_ref:get_player_name()] = {player = player_ref, wield = wield_entity}
     
@@ -74,6 +75,17 @@ minetest.register_on_leaveplayer(function(player_ref, timed_out)
     wield_entity:set_detach()
     wield_entity:remove()
     player_wield_items[player_ref:get_player_name()] = nil
+end)
+
+minetest.register_globalstep(function(dtime)
+    for _, player in pairs(player_wield_items) do
+        local wielded = player.player:get_wielded_item()
+        local wield_entity = player.wield
+
+        if wielded:get_name() ~= wield_entity:get_properties().wield_item then
+            wield_entity:set_properties({wield_item = wielded:get_name()})
+        end
+    end
 end)
 
 minetest.register_on_punchnode(function(pos, oldnode, digger)
