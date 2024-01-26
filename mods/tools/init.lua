@@ -36,6 +36,46 @@ minetest.register_entity(
     }
 )
 
+minetest.register_entity(
+    "tools:tool", 
+    {
+        initial_properties =
+        {
+            physical = false,
+            collide_with_objects = false,
+            visual = "wielditem",
+            visual_size = vector.new(0.5, 0.5, 0.5),
+            textures = {"emerald_pickaxe.png"},
+            pointable = false,
+            static_save = false
+        }
+    }
+)
+
+local player_wield_items = {}
+
+minetest.register_on_joinplayer(function(player_ref, last_login)
+
+    player_ref:hud_set_flags({wielditem = false})
+
+    minetest.after(0.2, function ()
+        local player_pos = player_ref:get_pos()
+        local wield_entity = minetest.add_entity(player_pos, "tools:tool")
+
+        wield_entity:set_attach(player_ref, "", {x = 5, y = 10, z = 10}, {x = 0, y = 90, z = 0}, true)
+
+        player_wield_items[player_ref:get_player_name()] = {player = player_ref, wield = wield_entity}
+    
+    end)
+end)
+
+minetest.register_on_leaveplayer(function(player_ref, timed_out)
+    local wield_entity = player_wield_items[player_ref:get_player_name()].wield
+    wield_entity:set_detach()
+    wield_entity:remove()
+    player_wield_items[player_ref:get_player_name()] = nil
+end)
+
 minetest.register_on_punchnode(function(pos, oldnode, digger)
     if not digger then return end
 
