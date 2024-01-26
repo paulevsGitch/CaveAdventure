@@ -1,20 +1,20 @@
 local SEED = minetest.get_mapgen_setting("seed")
 local BIOME_SIZE = 64
 local BIOMES = {}
+local ID_BY_NAME = {}
 local DATA = {}
 
 worldgen.biome_map = {}
 
-local octaves = math.floor(math.log(BIOME_SIZE) / math.log(2) + 0.5) - 2
-if octaves < 1 then
-	octaves = 1
+worldgen.biome_map.get_biome_id = function(name)
+	return ID_BY_NAME[name]
 end
 
 local params = {
 	offset = 0,
 	scale = 1,
 	spread = {x = 1, y = 1, z = 1},
-	octaves = octaves,
+	octaves = 3,
 	persistence = 0.5,
 	lacunarity = 2.0,
 	flags = "defaults"
@@ -35,6 +35,7 @@ local DISTORT_Z_NOISE = PerlinNoise(params)
 worldgen.biome_map.register_biome = function(def)
 	def.id = #BIOMES + 1
 	table.insert(BIOMES, def)
+	ID_BY_NAME[def.name] = def.id
 end
 
 local path = minetest.get_worldpath()
@@ -71,6 +72,28 @@ local function load_chunk(cx, cy, cz)
 	return nil
 end
 
+local layer_cache = {}
+
+local function make_chunk(index, cy)
+	local sy = bit.lshift(cy, 4)
+	local chunk = {}
+
+	for i = 0, 15 do
+		minetest.log(cy .. " " .. (bit.bor(sy, i) * BIOME_SIZE))
+		layer_cache[i + 1] = worldgen.get_layer(bit.bor(sy, i) * BIOME_SIZE).biomes
+	end
+
+	math.randomseed(index + SEED)
+	for i = 1, 4096 do
+		local dy = bit.band(bit.rshift(i, 4), 15)
+		local layer_biomes = layer_cache[dy + 1]
+		local id = layer_biomes[math.random(#layer_biomes)]
+		chunk[i] = BIOMES[id]
+	end
+
+	return chunk
+end
+
 local DISTORT_X_MAP, DISTORT_Y_MAP, DISTORT_Z_MAP
 local biome_pos = {}
 local map_x = {}
@@ -101,7 +124,7 @@ worldgen.biome_map.fill_map = function(min_pos, side)
 		for y = 0, side do
 			for x = 0, side do
 				biome_pos.x = (min_pos.x + x) / BIOME_SIZE + map_x[index]
-				biome_pos.y = (min_pos.y + y) / BIOME_SIZE + map_y[index]
+				biome_pos.y = (min_pos.y + y) / BIOME_SIZE + map_y[index] * 0.1
 				biome_pos.z = (min_pos.z + z) / BIOME_SIZE + map_z[index]
 				
 				local cx = math.floor(biome_pos.x / 16.0)
@@ -117,18 +140,10 @@ worldgen.biome_map.fill_map = function(min_pos, side)
 
 				if not chunk then
 					chunk = load_chunk(cx, cy, cz)
-
 					if not chunk then
-						chunk = {}
-
-						math.randomseed(chunk_index + SEED)
-						for i = 1, 4096 do
-							chunk[i] = BIOMES[math.random(#BIOMES)]
-						end
-						
+						chunk = make_chunk(chunk_index, cy)
 						save_chunk(chunk, cx, cy, cz)
 					end
-
 					DATA[chunk_index] = chunk
 				end
 
@@ -146,7 +161,7 @@ worldgen.biome_map.get_biome = function(x, y, z)
 	biome_pos.z = z / BIOME_SIZE
 
 	local dx = DISTORT_X_NOISE:get_3d(biome_pos)
-	local dy = DISTORT_Y_NOISE:get_3d(biome_pos)
+	local dy = DISTORT_Y_NOISE:get_3d(biome_pos) * 0.1
 	local dz = DISTORT_Z_NOISE:get_3d(biome_pos)
 	
 	biome_pos.x = biome_pos.x + dx
@@ -166,18 +181,10 @@ worldgen.biome_map.get_biome = function(x, y, z)
 
 	if not chunk then
 		chunk = load_chunk(cx, cy, cz)
-
 		if not chunk then
-			chunk = {}
-
-			math.randomseed(index + SEED)
-			for i = 1, 4096 do
-				chunk[i] = BIOMES[math.random(#BIOMES)]
-			end
-			
+			chunk = make_chunk(index, cy)
 			save_chunk(chunk, cx, cy, cz)
 		end
-
 		DATA[index] = chunk
 	end
 
@@ -195,7 +202,7 @@ worldgen.biome_map.is_filler = function(node_id)
 end
 
 minetest.register_on_mods_loaded(function()
-	for _, biome in pairs(BIOMES) do
+	for _, biome in ipairs(BIOMES) do
 		if not biome.surface then
 			biome.surface = biome.filler
 		end

@@ -29,12 +29,21 @@ local function get_sky_data(player)
 			clouds = false
 		}
 		data.pos = vector.zero()
-		data.colors = {}
+		data.colors = {
+			{ r = 0, g = 0, b = 0 },
+			{ r = 0, g = 0, b = 0 },
+			{ r = 0, g = 0, b = 0 },
+			{ r = 0, g = 0, b = 0 },
+			{ r = 0, g = 0, b = 0 },
+			{ r = 0, g = 0, b = 0 },
+			{ r = 0, g = 0, b = 0 },
+			{ r = 0, g = 0, b = 0 }
+		}
 	end
 
 	local pos = player:get_pos()
 	PLAYER_POS.x = bit.lshift(math.floor(pos.x / 16.0), 4)
-	PLAYER_POS.y = bit.lshift(math.floor(pos.y / 16.0), 4)
+	PLAYER_POS.y = bit.lshift(math.floor(pos.y /  8.0), 3)
 	PLAYER_POS.z = bit.lshift(math.floor(pos.z / 16.0), 4)
 
 	if not data.colors or data.pos.x ~= PLAYER_POS.x or data.pos.y ~= PLAYER_POS.y or data.pos.z ~= PLAYER_POS.z then
@@ -44,16 +53,16 @@ local function get_sky_data(player)
 
 		data.colors[1] = worldgen.biome_map.get_biome(PLAYER_POS.x, PLAYER_POS.y, PLAYER_POS.z).fog_color_f
 		data.colors[2] = worldgen.biome_map.get_biome(PLAYER_POS.x + 16, PLAYER_POS.y, PLAYER_POS.z).fog_color_f
-		data.colors[3] = worldgen.biome_map.get_biome(PLAYER_POS.x, PLAYER_POS.y + 16, PLAYER_POS.z).fog_color_f
-		data.colors[4] = worldgen.biome_map.get_biome(PLAYER_POS.x + 16, PLAYER_POS.y + 16, PLAYER_POS.z).fog_color_f
+		data.colors[3] = worldgen.biome_map.get_biome(PLAYER_POS.x, PLAYER_POS.y + 8, PLAYER_POS.z).fog_color_f
+		data.colors[4] = worldgen.biome_map.get_biome(PLAYER_POS.x + 16, PLAYER_POS.y + 8, PLAYER_POS.z).fog_color_f
 		data.colors[5] = worldgen.biome_map.get_biome(PLAYER_POS.x, PLAYER_POS.y, PLAYER_POS.z + 16).fog_color_f
 		data.colors[6] = worldgen.biome_map.get_biome(PLAYER_POS.x + 16, PLAYER_POS.y, PLAYER_POS.z + 16).fog_color_f
-		data.colors[7] = worldgen.biome_map.get_biome(PLAYER_POS.x, PLAYER_POS.y + 16, PLAYER_POS.z + 16).fog_color_f
-		data.colors[8] = worldgen.biome_map.get_biome(PLAYER_POS.x + 16, PLAYER_POS.y + 16, PLAYER_POS.z + 16).fog_color_f
+		data.colors[7] = worldgen.biome_map.get_biome(PLAYER_POS.x, PLAYER_POS.y + 8, PLAYER_POS.z + 16).fog_color_f
+		data.colors[8] = worldgen.biome_map.get_biome(PLAYER_POS.x + 16, PLAYER_POS.y + 8, PLAYER_POS.z + 16).fog_color_f
 	end
 
 	local dx = (pos.x - PLAYER_POS.x) / 16.0
-	local dy = (pos.y - PLAYER_POS.y) / 16.0
+	local dy = (pos.y - PLAYER_POS.y) /  8.0
 	local dz = (pos.z - PLAYER_POS.z) / 16.0
 
 	local a = lerp_color(data.colors[1], data.colors[2], dx, COLOR_INT[1])

@@ -11,8 +11,8 @@ worldgen.feature_types = {
 
 dofile(path .. "/biome_map.lua")
 dofile(path .. "/layer_api.lua")
-dofile(path .. "/layers.lua")
 dofile(path .. "/biomes.lua")
+dofile(path .. "/layers.lua")
 dofile(path .. "/generator.lua")
 dofile(path .. "/environment.lua")
 dofile(path .. "/spawnpoint.lua")

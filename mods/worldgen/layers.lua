@@ -151,6 +151,7 @@ worldgen.register_layer({
 		n = 0.8 - get_voronoi_2d(seed_stalactites, pos.x * 0.1, pos.z * 0.1) + gradient(pos.y, layer.min_y, layer.max_y, n, 1.0)
 		density = smooth_union_positive(density, n, 2.0)
 
-		return density;
-	end
+		return density
+	end,
+	biomes = { "Limestone Cavern", "Vine Grouve" }
 })

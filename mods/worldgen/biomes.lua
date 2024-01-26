@@ -9,6 +9,12 @@ local function debug_feature (context)
 end
 
 worldgen.biome_map.register_biome({
+	name = "World Border",
+	filler = "stones:limestone",
+	fog_color = "#000000"
+})
+
+worldgen.biome_map.register_biome({
 	name = "Limestone Cavern",
 	filler = "stones:limestone",
 	fog_color = "#898069",

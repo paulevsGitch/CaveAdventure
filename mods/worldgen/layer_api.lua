@@ -5,7 +5,8 @@ local DEFAULT_LAYER = {
 	max_y =  32000,
 	density_function = function (layer, pos)
 		return 1.0;
-	end
+	end,
+	biomes = { "World Border" }
 }
 
 -- Layer Def Format
@@ -22,3 +23,17 @@ worldgen.get_layer = function (y)
 	end
 	return DEFAULT_LAYER
 end
+
+minetest.register_on_mods_loaded(function()
+	local biomes = DEFAULT_LAYER.biomes
+	for index, biome in ipairs(biomes) do
+		biomes[index] = worldgen.biome_map.get_biome_id(biome)
+	end
+	
+	for _, layer in ipairs(LAYERS) do
+		biomes = layer.biomes
+		for index, biome in ipairs(biomes) do
+			biomes[index] = worldgen.biome_map.get_biome_id(biome)
+		end
+	end
+end)
