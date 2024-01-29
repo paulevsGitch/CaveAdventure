@@ -19,7 +19,7 @@ minetest.register_abm({
 	interval = 5.0,
 	chance = 5,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local dir = minetest.facedir_to_dir(math.random(0, 5))
+		local dir = minetest.wallmounted_to_dir(math.random(0, 5))
 		local side_pos = vector.add(pos, dir)
 		local side_node = minetest.get_node(side_pos)
 		local growth = ROOTS_GROWTH[node.name]
