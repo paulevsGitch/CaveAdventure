@@ -69,3 +69,35 @@ minetest.register_node("plants:roots_block", {
 	tiles = { "plants_roots_block.png" },
 	node_hp = 7
 })
+
+minetest.register_abm({
+	label = "Roots Spreading Block",
+	nodenames = { "plants:roots_block" },
+	interval = 10.0,
+	chance = 50,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		local dir = minetest.facedir_to_dir(math.random(0, 5))
+		local side_pos = vector.add(pos, dir)
+		local side_node = minetest.get_node(side_pos)
+		if side_node.name == "stones:limestone" then
+			side_node.name = "plants:limestone_with_dense_roots"
+			minetest.set_node(side_pos, side_node)
+		end
+	end,
+})
+
+minetest.register_abm({
+	label = "Roots Spreading Block",
+	nodenames = { "plants:limestone_with_dense_roots" },
+	interval = 10.0,
+	chance = 50,
+	action = function(pos, node, active_object_count, active_object_count_wider)
+		local dir = minetest.facedir_to_dir(math.random(0, 5))
+		local side_pos = vector.add(pos, dir)
+		local side_node = minetest.get_node(side_pos)
+		if side_node.name == "stones:limestone" then
+			side_node.name = "plants:limestone_with_roots"
+			minetest.set_node(side_pos, side_node)
+		end
+	end,
+})
