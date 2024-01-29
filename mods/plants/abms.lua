@@ -28,6 +28,7 @@ minetest.register_abm({
 			minetest.set_node(side_pos, side_node)
 		end
 	end,
+<<<<<<< HEAD
 })
 
 minetest.register_abm({
@@ -156,4 +157,6 @@ minetest.register_abm({
 		
 		minetest.set_node(place_pos, world_node)
 	end,
+=======
+>>>>>>> 84e99fbe742a4743f1b981a1fd4004ed4a4644b7
 })
