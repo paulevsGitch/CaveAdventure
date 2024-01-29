@@ -1,5 +1,12 @@
 local S = minetest.get_translator("plants")
 
+local sounds = {
+	footstep = {name = "plants_roots_step", gain = 1.0},
+	dig = {name = "plants_roots_step", gain = 0.25},
+	dug = {name = "plants_roots_step", gain = 0.25},
+	place = {name = "plants_roots_step", gain = 0.5}
+}
+
 minetest.register_node("plants:flower_stem", {
 	description = S("Flower Stem"),
 	tiles = { "plants_flower_stem.png" },
@@ -54,18 +61,21 @@ minetest.register_node("plants:limestone_with_roots", {
 	description = S("Limestone With Roots"),
 	tiles = { "stones_limestone.png^plants_roots_overlay.png" },
 	node_hp = 5,
-	drop = "stones:limestone"
+	drop = "stones:limestone",
+	sounds = sounds
 })
 
 minetest.register_node("plants:limestone_with_dense_roots", {
 	description = S("Limestone With Roots"),
 	tiles = { "stones_limestone.png^plants_dense_roots_overlay.png" },
 	node_hp = 5,
-	drop = "stones:limestone"
+	drop = "stones:limestone",
+	sounds = sounds
 })
 
 minetest.register_node("plants:roots_block", {
 	description = S("Roots Block"),
 	tiles = { "plants_roots_block.png" },
-	node_hp = 7
+	node_hp = 7,
+	sounds = sounds
 })

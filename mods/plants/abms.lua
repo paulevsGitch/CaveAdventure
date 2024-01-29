@@ -16,8 +16,8 @@ end
 minetest.register_abm({
 	label = "Roots Spreading",
 	nodenames = nodenames,
-	interval = 10.0,
-	chance = 50,
+	interval = 5.0,
+	chance = 5,
 	action = function(pos, node, active_object_count, active_object_count_wider)
 		local dir = minetest.facedir_to_dir(math.random(0, 5))
 		local side_pos = vector.add(pos, dir)
